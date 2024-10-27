@@ -27,29 +27,6 @@ services:
     depends_on:
       - init
 
-  # # Generate fake traces...
-  # k6-tracing:
-  #   image: ghcr.io/grafana/xk6-client-tracing:v0.0.5
-  #   # environment:
-  #   #   - ENDPOINT=alloy:4317
-  #   restart: always
-  #   depends_on:
-  #     - tempo
-  #     - alloy
-
-  beyla:
-    image: grafana/beyla:latest
-    pid: "service:grafana"
-    privileged: true
-    environment:
-      BEYLA_TRACE_PRINTER: text
-      BEYLA_OPEN_PORT: 3000
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://alloy:4317
-    depends_on:
-      - tempo
-      - alloy
-
-
   # And put them in a Grafana Alloy pipeline...
   alloy:
     image: grafana/alloy:v1.3.1
@@ -65,6 +42,18 @@ services:
       - "4319:4319"
     depends_on:
       - tempo
+
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus.yaml
+      - --web.enable-remote-write-receiver
+      - --enable-feature=exemplar-storage
+      - --enable-feature=native-histograms
+    volumes:
+      - ../shared/prometheus.yaml:/etc/prometheus.yaml
+    ports:
+      - "9090:9090"
 
   grafana:
     image: grafana/grafana:11.2.0
