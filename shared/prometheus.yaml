@@ -1,0 +1,27 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: [ 'localhost:9090' ]
+  - job_name: 'tempo'
+    static_configs:
+      - targets: [ 'tempo:3200' ]
+
+  - job_name: 'aws_ec2_albatross_neo_mr_metrics'
+    ec2_sd_configs:
+      - region: "ap-south-1"               # e.g., "ap-south-1" for Mumbai
+        access_key: ""
+        secret_key: ""
+        port: 9090                          # Adjust to the correct metrics port if different
+    relabel_configs:
+      # Keep instances with "Service" tag as "albatross"
+      - source_labels: [__meta_ec2_tag_Service]
+        regex: albatross
+        action: keep
+      # Keep instances with "environment" tag as "neo-mr"
+      - source_labels: [__meta_ec2_tag_environment]
+        regex: neo-mr
+        action: keep
