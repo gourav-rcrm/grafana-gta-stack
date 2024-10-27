@@ -19,13 +19,12 @@ services:
       - ../shared/tempo.yaml:/etc/tempo.yaml
       - ./tempo-data:/var/tempo
     ports:
-      - "14268"  # jaeger ingest
       - "3200"   # tempo
       # - "4317"  # otlp grpc
       # - "4318"  # otlp http
-      - "9411"   # zipkin2024-04-23T16:16:57+0000
     depends_on:
       - init
+
 
   # And put them in a Grafana Alloy pipeline...
   alloy:
@@ -39,6 +38,7 @@ services:
       - --server.http.listen-addr=0.0.0.0:12345
     ports:
       - "12345:12345"
+      - "4317:4317"
       - "4319:4319"
     depends_on:
       - tempo
@@ -54,7 +54,6 @@ services:
       - ../shared/prometheus.yaml:/etc/prometheus.yaml
     ports:
       - "9090:9090"
-
   grafana:
     image: grafana/grafana:11.2.0
     volumes:
@@ -65,4 +64,4 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
       - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
     ports:
-      - "3000:3000"
+      - "3001:3000"
