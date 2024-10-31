@@ -130,3 +130,124 @@ scrape_configs:
       - source_labels: [__meta_ec2_tag_environment]
         regex: neo2
         action: keep
+  - job_name: 'aws_ec2_Albatross_Infra'
+    ec2_sd_configs:
+      - region: "ap-south-1"               # e.g., "ap-south-1" for Mumbai
+        access_key: ""
+        secret_key: ""
+        port: 9100                          # Adjust to the correct metrics port if different
+    relabel_configs:
+      # Keep instances with "Service" tag as "albatross"
+      - source_labels: [__meta_ec2_tag_Service]
+        regex: albatross
+        action: keep
+      # Keep instances with "environment" tag as "neo2"
+      - source_labels: [__meta_ec2_tag_environment]
+        regex: neo2
+        action: keep
+  - job_name: 'aws_ec2_API_Worker_Infra'
+    ec2_sd_configs:
+      - region: "ap-south-1"               # e.g., "ap-south-1" for Mumbai
+        access_key: ""
+        secret_key: ""
+        port: 9100                          # Adjust to the correct metrics port if different
+    relabel_configs:
+      # Keep instances with "Service" tag as "albatross"
+      - source_labels: [__meta_ec2_tag_Service]
+        regex: api-worker
+        action: keep
+      # Keep instances with "environment" tag as "neo2"
+      - source_labels: [__meta_ec2_tag_environment]
+        regex: neo2
+        action: keep
+  - job_name: 'aws_ec2_Webapp_v1_Infra'
+    ec2_sd_configs:
+      - region: "ap-south-1"               # e.g., "ap-south-1" for Mumbai
+        access_key: ""
+        secret_key: ""
+        port: 9100                          # Adjust to the correct metrics port if different
+    relabel_configs:
+      # Keep instances with "Service" tag as "albatross"
+      - source_labels: [__meta_ec2_tag_Service]
+        regex: webapp-v1
+        action: keep
+      # Keep instances with "environment" tag as "neo2"
+      - source_labels: [__meta_ec2_tag_environment]
+        regex: neo2
+        action: keep
+  - job_name: 'aws_ec2_Jobboard_Infra'
+    ec2_sd_configs:
+      - region: "ap-south-1"               # e.g., "ap-south-1" for Mumbai
+        access_key: ""
+        secret_key: ""
+        port: 9100                          # Adjust to the correct metrics port if different
+    relabel_configs:
+      # Keep instances with "Service" tag as "albatross"
+      - source_labels: [__meta_ec2_tag_Service]
+        regex: jobboard
+        action: keep
+      # Keep instances with "environment" tag as "neo2"
+      - source_labels: [__meta_ec2_tag_environment]
+        regex: neo2
+        action: keep
+  - job_name: 'aws_ec2_Candidate_Infra'
+    ec2_sd_configs:
+      - region: "ap-south-1"               # e.g., "ap-south-1" for Mumbai
+        access_key: ""
+        secret_key: ""
+        port: 9100                          # Adjust to the correct metrics port if different
+    relabel_configs:
+      # Keep instances with "Service" tag as "albatross"
+      - source_labels: [__meta_ec2_tag_Service]
+        regex: candidate
+        action: keep
+      # Keep instances with "environment" tag as "neo2"
+      - source_labels: [__meta_ec2_tag_environment]
+        regex: neo2
+        action: keep
+  - job_name: 'aws_ec2_Bulk_Export_Infra'
+    ec2_sd_configs:
+      - region: "ap-south-1"               # e.g., "ap-south-1" for Mumbai
+        access_key: ""
+        secret_key: ""
+        port: 9100                          # Adjust to the correct metrics port if different
+    relabel_configs:
+      # Keep instances with "Service" tag as "albatross"
+      - source_labels: [__meta_ec2_tag_Service]
+        regex: bulk-export
+        action: keep
+      # Keep instances with "environment" tag as "neo2"
+      - source_labels: [__meta_ec2_tag_environment]
+        regex: neo2
+        action: keep
+  - job_name: 'aws_ec2_Neptune_Infra'
+    ec2_sd_configs:
+      - region: "ap-south-1"               # e.g., "ap-south-1" for Mumbai
+        access_key: ""
+        secret_key: ""
+        port: 9100                          # Adjust to the correct metrics port if different
+    relabel_configs:
+      # Keep instances with "Service" tag as "albatross"
+      - source_labels: [__meta_ec2_tag_Service]
+        regex: neptune
+        action: keep
+      # Keep instances with "environment" tag as "neo2"
+      - source_labels: [__meta_ec2_tag_environment]
+        regex: neo2
+        action: keep
+  - job_name: 'aws_ec2_Externalpages_Infra'
+    ec2_sd_configs:
+      - region: "ap-south-1"               # e.g., "ap-south-1" for Mumbai
+        access_key: ""
+        secret_key: ""
+        port: 9100                          # Adjust to the correct metrics port if different
+    relabel_configs:
+      # Keep instances with "Service" tag as "albatross"
+      - source_labels: [__meta_ec2_tag_Service]
+        regex: externalpages-v2
+        action: keep
+      # Keep instances with "environment" tag as "neo2"
+      - source_labels: [__meta_ec2_tag_environment]
+        regex: neo2
+        action: keep
+
