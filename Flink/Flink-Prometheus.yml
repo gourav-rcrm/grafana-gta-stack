@@ -1,0 +1,85 @@
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkDeployment
+metadata:
+  name: prom-observability
+spec:
+  image: 813287113117.dkr.ecr.eu-west-1.amazonaws.com/zenith-flink:latest
+  imagePullPolicy: Always
+  podTemplate:
+    spec:
+      containers:
+        - name: flink-main-container
+          ports:
+            - containerPort: 9250
+              name: prometheus-metrics-1
+              protocol: TCP
+            - containerPort: 9251
+              name: prometheus-metrics-2
+              protocol: TCP
+      imagePullSecrets:
+        - name: ecr-registry-key
+  flinkVersion: v1_20
+  flinkConfiguration:
+    taskmanager.numberOfTaskSlots: "1"
+    parallelism.default: "1"
+    metrics.reporters: prom,jvm
+    metrics.reporter.prom.class: org.apache.flink.metrics.prometheus.PrometheusReporter
+    metrics.reporter.prom.factory.class: org.apache.flink.metrics.prometheus.PrometheusReporterFactory
+    metrics.reporter.prom.host: "localhost"
+    metrics.reporter.prom.port: "9250-9260"
+    metrics.scope.jm: flink.jobmanager
+    metrics.scope.jm.job: flink.jobmanager.job
+    metrics.scope.tm: flink.taskmanager
+    metrics.scope.tm.job: flink.taskmanager.job
+    metrics.scope.task: flink.task
+    metrics.scope.operator: flink.operator
+    metrics.latency.interval: "30000"
+    metrics.latency.history-size: "32"
+    state.backend.rocksdb.metrics.enabled: "true"
+    state.backend.rocksdb.metrics.reporter: org.apache.flink.metrics.prometheus.RocksDBPrometheusReporter
+    metrics.reporter.jvm.class: org.apache.flink.metrics.jvm.JvmMetricsReporter
+    metrics.reporter.jvm.enabled: "true"
+    metrics.reporter.jvm.interval: "1min"
+    metrics.system-resource: "true"
+    metrics.system-resource-probing-interval: "5000"
+    state.backend.rocksdb.metrics.factory.class: org.apache.flink.metrics.rocksdb.RocksDBNativeMetricFactory
+    state.backend.rocksdb.metrics.level: ALL
+    state.backend.rocksdb.metrics.debug-all: "true"
+    state.backend.rocksdb.metrics.cache-capacity: "true"
+    state.backend.rocksdb.metrics.write-buffer: "true"
+    state.backend.rocksdb.metrics.block-cache: "true"
+    state.backend.rocksdb.metrics.num-immutable-mem-table: "true"
+    state.backend.rocksdb.metrics.mem-table-flush-pending: "true"
+    state.backend.rocksdb.metrics.compaction-pending: "true"
+    state.backend.rocksdb.metrics.background-errors: "true"
+    state.backend.rocksdb.metrics.cur-size-active-mem-table: "true"
+    state.backend.rocksdb.metrics.cur-size-all-mem-tables: "true"
+    state.backend.rocksdb.metrics.size-all-mem-tables: "true"
+    state.backend.rocksdb.metrics.num-entries-active-mem-table: "true"
+    state.backend.rocksdb.metrics.num-entries-imm-mem-tables: "true"
+    state.backend.rocksdb.metrics.num-deletes-active-mem-table: "true"
+    state.backend.rocksdb.metrics.num-deletes-imm-mem-tables: "true"
+    state.backend.rocksdb.metrics.estimate-num-keys: "true"
+    state.backend.rocksdb.metrics.estimate-table-readers-mem: "true"
+    state.backend.rocksdb.metrics.num-snapshots: "true"
+    state.backend.rocksdb.metrics.num-live-versions: "true"
+    state.backend.rocksdb.metrics.estimate-live-data-size: "true"
+    state.backend.rocksdb.metrics.total-sst-files-size: "true"
+    state.backend.rocksdb.metrics.live-sst-files-size: "true"
+    state.backend.rocksdb.metrics.num-live-files: "true"
+    state.backend.rocksdb.metrics.estimate-pending-compaction-bytes: "true"
+  serviceAccount: flink
+  jobManager:
+    resource:
+      memory: "1g"
+      cpu: 1
+  taskManager:
+    resource:
+      memory: "1g"
+      cpu: 1
+    replicas: 1
+  job:
+    jarURI: local:///opt/flink/usrlib/sql-runner.jar
+    args: ["/opt/flink/usrlib/sql-scripts/tables-cdc/tblcandidate.sql"]
+    parallelism: 2
+    upgradeMode: stateless
